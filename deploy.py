@@ -35,6 +35,7 @@ class ChallengeLoader:
 			username = 'problem' + config['competition'] + '_' + config['name']
 			subprocess.run(['userdel', '-r', username])
 			subprocess.run(['useradd', '-s', '/sbin/nologin', '-m', '-d', problemdir, '-G', 'problems', username])
+			subprocess.run(['edquota', '-p', 'problem', username])
 			os.chmod(problemdir, 0o000)
 			mutable = []
 			for file in config['files']:

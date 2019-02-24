@@ -22,7 +22,7 @@ class ChallengeLoader:
 			if os.path.exists('./challenge'): shutil.rmtree('./challenge')
 			os.mkdir('challenge')
 			tar.extractall(path='./challenge', members=filter(safe, tar.getmembers()))
-			try: config = yaml.load(open('./challenge/config.yml'))
+			try: config = yaml.safe_load(open('./challenge/config.yml'))
 			except FileNotFoundError:
 				resp.status = '400'
 				return
@@ -64,5 +64,5 @@ class AuthMiddleware(object):
 	def process_resource(self, req, resp, resource, params):
 		req.context['auth'] = req.get_header('Authorization') == self.secret
 
-app = falcon.API(middleware=[AuthMiddleware(os.environ['PWN_SECRET']), MultipartMiddleware()])
+app = falcon.API(middleware=[AuthMiddleware(os.environ['SHELL_DEPLOY_SECRET']), MultipartMiddleware()])
 app.add_route('/challenge', ChallengeLoader)

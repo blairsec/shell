@@ -46,6 +46,7 @@ class ChallengeLoader:
 			for file in config['files']: os.chmod(os.path.join(problemdir, file['dest']), int(str(file['mode']), 8))
 			os.chmod(problemdir, 0o755)
 			subprocess.run(['chattr', '-R', '+i', problemdir])
+			if 'immutable' in config and config['immutable'] == False: subprocess.run(['chattr', '-i', problemdir])
 			if 'xinetd' in config:
 				xinetdconf = open(os.path.join('/etc/xinetd.d/', username), 'w')
 				with open('xinetd.conf') as f:
@@ -55,6 +56,15 @@ class ChallengeLoader:
 			subprocess.run(['systemctl', 'reload', 'xinetd'])
 			for file in mutable: subprocess.run(['chattr', '-R', '-i', file])
 			print(config)
+		else: resp.status = '401'
+	def on_delete(req, resp):
+		if req.context['auth']:
+			challenge = req.get_param('challenge')
+			competition = req.get_param('competition')
+			if not challenge or not competition:
+				resp.status = '400'
+				return
+			problemdir = os.path.abspath(os.path.join(config['root'], competition, challenge))
 		else: resp.status = '401'
 
 class AuthMiddleware(object):

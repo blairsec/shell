@@ -53,7 +53,9 @@ class ChallengeLoader:
 					template = f.read()
 				xinetdconf.write(template.format(username=username, port=config['xinetd']['port'], server=os.path.join(problemdir, config['xinetd']['server'])))
 				xinetdconf.close()
-			subprocess.run(['systemctl', 'reload', 'xinetd'])
+				subprocess.run(['systemctl', 'reload', 'xinetd'])
+			if 'run' in config:
+				subprocess.run(['screen', '-d', '-m', config['run']])
 			for file in mutable: subprocess.run(['chattr', '-R', '-i', file])
 			print(config)
 		else: resp.status = '401'

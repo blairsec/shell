@@ -55,7 +55,7 @@ class ChallengeLoader:
 				xinetdconf.close()
 				subprocess.run(['systemctl', 'reload', 'xinetd'])
 			if 'run' in config:
-				subprocess.run(['su', username, '-c', 'cd ' + problemdir + '; screen -d -m ' + config['run']])
+				subprocess.run(['su', username, '-s', '/bin/bash', '-c', 'cd ' + problemdir + '; screen -d -m ' + config['run']])
 			for file in mutable: subprocess.run(['chattr', '-R', '-i', file])
 			print(config)
 		else: resp.status = '401'
